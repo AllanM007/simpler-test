@@ -1,0 +1,24 @@
+version: "3"
+services:
+  api:
+    image: golang:1.23
+    working_dir: /root/
+    volumes:
+      # - ./:/go/bin/simpler-test
+      - /go/bin/simpler-test/db_volume # excluded
+    depends_on:
+      - psql
+    command: go run main.go 
+    ports:
+      - "8080:8080"
+
+  psql:
+    image: postgres:13.3
+    volumes:
+      - ./db_volume/:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: "simpler"
+      POSTGRES_PASSWORD: "QEU2zYILBoMAH26Q"
+      POSTGRES_DB: "simpler-test"
+    ports:
+      - "27000:5432"
