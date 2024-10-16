@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/AllanM007/simpler-test/models"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -24,6 +25,8 @@ func connectDB() *gorm.DB {
 		fmt.Printf("Error connecting to database : error=%v", err)
 		return nil
 	}
+
+	db.AutoMigrate(&models.Product{})
 
 	return db
 }
