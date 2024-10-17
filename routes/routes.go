@@ -31,9 +31,8 @@ func Router() *gin.Engine {
 	app.GET("/api/v1/products", ProductsRepo.GetProducts)
 	app.GET("/api/v1/product/:id", ProductsRepo.GetProductById)
 	app.PUT("/api/v1/update-product/:id", ProductsRepo.UpdateProduct)
+	app.PUT("/api/v1/product-sale", ProductsRepo.ProductSale)
 	app.DELETE("/api/v1/delete-product/:id", ProductsRepo.DeleteProduct)
-
-	app.POST("/api/v1/product-sale")
 
 	app.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
