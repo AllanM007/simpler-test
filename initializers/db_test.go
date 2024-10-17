@@ -13,7 +13,7 @@ func TestDBConnection(t *testing.T) {
 	if err != nil {
 		t.Fatalf("Error loading .env file: %v", err)
 	}
-	db, err := ConnectDB()
+	db, err := connectDB()
 	if err != nil {
 		t.Fatalf("Failed to connect to database: %v", err)
 	}
