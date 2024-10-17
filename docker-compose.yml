@@ -1,24 +1,30 @@
-version: "3"
+version: "3.8"
 services:
   api:
-    image: golang:1.23
-    working_dir: /root/
-    volumes:
-      # - ./:/go/bin/simpler-test
-      - /go/bin/simpler-test/db_volume # excluded
-    depends_on:
-      - psql
-    command: go run main.go 
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - DB_NAME=simpler_test
+      - DB_HOST=db
+      - DB_PASSWORD=simplePassword2!
+      - DB_USER=simpler
+      - DB_PORT=5432
     ports:
       - "8080:8080"
+    depends_on:
+      - db
 
-  psql:
+  db:
     image: postgres:13.3
-    volumes:
-      - ./db_volume/:/var/lib/postgresql
     environment:
       POSTGRES_USER: "simpler"
-      POSTGRES_PASSWORD: "QEU2zYILBoMAH26Q"
-      POSTGRES_DB: "simpler-test"
+      POSTGRES_PASSWORD: "simplePassword2!"
+      POSTGRES_DB: "simpler_test"
     ports:
-      - "27000:5432"
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
