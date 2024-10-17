@@ -1,0 +1,121 @@
+info:
+  contact: {}
+paths:
+  /api/v1/create-product:
+    post:
+      consumes:
+      - application/json
+      description: create new product
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Create products
+      tags:
+      - products
+  /api/v1/delete-product/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: delete product by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Delete A Product
+      tags:
+      - products
+  /api/v1/product-sale:
+    post:
+      consumes:
+      - application/json
+      description: update a product by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Update A Product
+      tags:
+      - products
+  /api/v1/product/{id}:
+    get:
+      consumes:
+      - application/json
+      description: get product by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get Product By Id
+      tags:
+      - products
+  /api/v1/products:
+    get:
+      consumes:
+      - application/json
+      description: get all products
+      parameters:
+      - description: Number of page
+        in: query
+        name: page
+        type: string
+      - description: count in a page
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Get products
+      tags:
+      - products
+  /api/v1/update-product/{id}:
+    put:
+      consumes:
+      - application/json
+      description: update a product by id
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+        "404":
+          description: Not Found
+        "500":
+          description: Internal Server Error
+      summary: Update A Product
+      tags:
+      - products
+swagger: "2.0"
