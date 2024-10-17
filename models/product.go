@@ -9,5 +9,6 @@ type Product struct {
 	ID          uint64 `gorm:"column:id;primary_key;auto_increment;" json:"id"`
 	Name        string `gorm:"name;unique;not null"`
 	Description string `gorm:"description;not null"`
-	Active      bool   `gorm:"active;not null"`
+	StockLevel  int    `gorm:"stockLevel"`
+	Active      bool   `gorm:"active"`
 }
