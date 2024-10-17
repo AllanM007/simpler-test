@@ -1,8 +1,8 @@
 package initializers
 
 import (
-	"fmt"
 	"log"
+	"os"
 	"path/filepath"
 
 	"github.com/joho/godotenv"
@@ -10,14 +10,15 @@ import (
 
 func LoadEnvVariables() {
 
-	// err := godotenv.Load(".env")
-	err := godotenv.Load(filepath.Join("./", ".env"))
-
-	// envPath,_ := filepath.Abs("./.env");
-	// environments,err := godotenv.Read(envPath)
-	// fmt.Println(environments)
+	// Get the current directory of the project
+	dir, err := os.Getwd()
 	if err != nil {
-		fmt.Println("error loading env file")
+		log.Fatalf("Error getting current directory: %v", err)
+	}
+
+	err = godotenv.Load(filepath.Join(dir, ".env"))
+	if err != nil {
+		log.Println("error loading env file")
 		log.Fatal(err)
 	}
 }
