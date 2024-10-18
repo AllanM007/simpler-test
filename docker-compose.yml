@@ -1,5 +1,16 @@
 version: "3.8"
 services:
+  db:
+    image: postgres:13.3
+    environment:
+      POSTGRES_USER: "simpler"
+      POSTGRES_PASSWORD: "simplePassword2!"
+      POSTGRES_DB: "simpler_test"
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
   api:
     build:
       context: .
@@ -14,17 +25,6 @@ services:
       - "8080:8080"
     depends_on:
       - db
-
-  db:
-    image: postgres:13.3
-    environment:
-      POSTGRES_USER: "simpler"
-      POSTGRES_PASSWORD: "simplePassword2!"
-      POSTGRES_DB: "simpler_test"
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
 
 volumes:
   postgres_data:

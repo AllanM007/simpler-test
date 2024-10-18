@@ -17,6 +17,7 @@ COPY . .
 RUN go mod tidy
 RUN go mod download
 
+# run tests
 # RUN go test -v ./...
 
 RUN go build -o /app/cmd/main /app/cmd/main.go
