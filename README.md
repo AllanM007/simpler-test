@@ -41,7 +41,7 @@ http://localhost:8080/swagger/index.html
 - The API utilizes <strong>Offset</strong> api pagination in the products endpoint by passing <strong>page=&limit=</strong> parameters to the `products` endpoint.
 
 ### Tests
-- The project has a couple of tests which can be run using:
+- The project has tests which can be run using:
 ```
 go test -v ./...
 ```
