@@ -1,3 +1,87 @@
+definitions:
+  controllers.InternalErrorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  controllers.ProductCreateReq:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    required:
+    - description
+    - name
+    - price
+    type: object
+  controllers.ProductData:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      price:
+        type: number
+      stock:
+        type: integer
+    type: object
+  controllers.ProductSale:
+    properties:
+      count:
+        type: integer
+      id:
+        type: integer
+    required:
+    - count
+    - id
+    type: object
+  controllers.ProductUpdateReq:
+    properties:
+      description:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      stockLevel:
+        type: integer
+    type: object
+  controllers.ProductsPaginatedResponse:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/controllers.ProductData'
+        type: array
+      meta:
+        $ref: '#/definitions/controllers.RequestMeta'
+      status:
+        type: string
+    type: object
+  controllers.RequestMeta:
+    properties:
+      current_page:
+        type: integer
+      limit:
+        type: integer
+      total_products:
+        type: integer
+    type: object
+  controllers.Response:
+    properties:
+      message:
+        type: string
+      status:
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -5,55 +89,98 @@ paths:
     post:
       consumes:
       - application/json
-      description: create new product
+      description: create product
+      parameters:
+      - description: Request's body
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProductCreateReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "500":
           description: Internal Server Error
-      summary: Create products
+          schema:
+            $ref: '#/definitions/controllers.InternalErrorResponse'
+      summary: Create a new product
       tags:
       - products
   /api/v1/delete-product/{id}:
     delete:
-      consumes:
-      - application/json
       description: delete product by id
+      parameters:
+      - description: Product Id
+        in: query
+        name: id
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/controllers.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "500":
           description: Internal Server Error
-      summary: Delete A Product
+          schema:
+            $ref: '#/definitions/controllers.InternalErrorResponse'
+      summary: Delete product
       tags:
       - products
   /api/v1/product-sale:
-    post:
+    put:
       consumes:
       - application/json
-      description: update a product by id
+      description: product sale
+      parameters:
+      - description: Request's body
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProductSale'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "500":
           description: Internal Server Error
-      summary: Update A Product
+          schema:
+            $ref: '#/definitions/controllers.InternalErrorResponse'
+      summary: Product sale
       tags:
       - products
   /api/v1/product/{id}:
@@ -61,16 +188,27 @@ paths:
       consumes:
       - application/json
       description: get product by id
+      parameters:
+      - description: Product Id
+        in: query
+        name: id
+        type: integer
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/controllers.ProductData'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "500":
           description: Internal Server Error
-      summary: Get Product By Id
+          schema:
+            $ref: '#/definitions/controllers.InternalErrorResponse'
+      summary: Get product
       tags:
       - products
   /api/v1/products:
@@ -79,11 +217,13 @@ paths:
       - application/json
       description: get all products
       parameters:
-      - description: Number of page
+      - default: "1"
+        description: Number of page
         in: query
         name: page
         type: string
-      - description: count in a page
+      - default: "10"
+        description: Books count in a page
         in: query
         name: limit
         type: string
@@ -92,11 +232,17 @@ paths:
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/controllers.ProductsPaginatedResponse'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "500":
           description: Internal Server Error
-      summary: Get products
+          schema:
+            $ref: '#/definitions/controllers.InternalErrorResponse'
+      summary: Get products with paging
       tags:
       - products
   /api/v1/update-product/{id}:
@@ -104,18 +250,37 @@ paths:
       consumes:
       - application/json
       description: update a product by id
+      parameters:
+      - description: Product Id
+        in: query
+        name: id
+        type: integer
+      - description: Request's body
+        in: body
+        name: params
+        required: true
+        schema:
+          $ref: '#/definitions/controllers.ProductUpdateReq'
       produces:
       - application/json
       responses:
         "200":
           description: OK
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "404":
           description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.Response'
         "500":
           description: Internal Server Error
-      summary: Update A Product
+          schema:
+            $ref: '#/definitions/controllers.InternalErrorResponse'
+      summary: Update product
       tags:
       - products
 swagger: "2.0"

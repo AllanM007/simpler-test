@@ -17,7 +17,7 @@ const docTemplate = `{
     "paths": {
         "/api/v1/create-product": {
             "post": {
-                "description": "create new product",
+                "description": "create product",
                 "consumes": [
                     "application/json"
                 ],
@@ -27,19 +27,42 @@ const docTemplate = `{
                 "tags": [
                     "products"
                 ],
-                "summary": "Create products",
+                "summary": "Create a new product",
+                "parameters": [
+                    {
+                        "description": "Request's body",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ProductCreateReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "404": {
-                        "description": "Not Found"
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.InternalErrorResponse"
+                        }
                     }
                 }
             }
@@ -47,32 +70,52 @@ const docTemplate = `{
         "/api/v1/delete-product/{id}": {
             "delete": {
                 "description": "delete product by id",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
                     "products"
                 ],
-                "summary": "Delete A Product",
+                "summary": "Delete product",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Product Id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "404": {
-                        "description": "Not Found"
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.InternalErrorResponse"
+                        }
                     }
                 }
             }
         },
         "/api/v1/product-sale": {
-            "post": {
-                "description": "update a product by id",
+            "put": {
+                "description": "product sale",
                 "consumes": [
                     "application/json"
                 ],
@@ -82,19 +125,42 @@ const docTemplate = `{
                 "tags": [
                     "products"
                 ],
-                "summary": "Update A Product",
+                "summary": "Product sale",
+                "parameters": [
+                    {
+                        "description": "Request's body",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ProductSale"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "404": {
-                        "description": "Not Found"
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.InternalErrorResponse"
+                        }
                     }
                 }
             }
@@ -111,16 +177,33 @@ const docTemplate = `{
                 "tags": [
                     "products"
                 ],
-                "summary": "Get Product By Id",
+                "summary": "Get product",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Product Id",
+                        "name": "id",
+                        "in": "query"
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ProductData"
+                        }
                     },
                     "404": {
-                        "description": "Not Found"
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.InternalErrorResponse"
+                        }
                     }
                 }
             }
@@ -137,30 +220,41 @@ const docTemplate = `{
                 "tags": [
                     "products"
                 ],
-                "summary": "Get products",
+                "summary": "Get products with paging",
                 "parameters": [
                     {
                         "type": "string",
+                        "default": "1",
                         "description": "Number of page",
                         "name": "page",
                         "in": "query"
                     },
                     {
                         "type": "string",
-                        "description": "count in a page",
+                        "default": "10",
+                        "description": "Books count in a page",
                         "name": "limit",
                         "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ProductsPaginatedResponse"
+                        }
                     },
                     "404": {
-                        "description": "Not Found"
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.InternalErrorResponse"
+                        }
                     }
                 }
             }
@@ -177,20 +271,178 @@ const docTemplate = `{
                 "tags": [
                     "products"
                 ],
-                "summary": "Update A Product",
+                "summary": "Update product",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Product Id",
+                        "name": "id",
+                        "in": "query"
+                    },
+                    {
+                        "description": "Request's body",
+                        "name": "params",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ProductUpdateReq"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "OK"
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "400": {
-                        "description": "Bad Request"
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "404": {
-                        "description": "Not Found"
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
                     },
                     "500": {
-                        "description": "Internal Server Error"
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.InternalErrorResponse"
+                        }
                     }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "controllers.InternalErrorResponse": {
+            "type": "object",
+            "properties": {
+                "error": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.ProductCreateReq": {
+            "type": "object",
+            "required": [
+                "description",
+                "name",
+                "price"
+            ],
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.ProductData": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stock": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.ProductSale": {
+            "type": "object",
+            "required": [
+                "count",
+                "id"
+            ],
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.ProductUpdateReq": {
+            "type": "object",
+            "properties": {
+                "description": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "price": {
+                    "type": "number"
+                },
+                "stockLevel": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.ProductsPaginatedResponse": {
+            "type": "object",
+            "properties": {
+                "data": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/controllers.ProductData"
+                    }
+                },
+                "meta": {
+                    "$ref": "#/definitions/controllers.RequestMeta"
+                },
+                "status": {
+                    "type": "string"
+                }
+            }
+        },
+        "controllers.RequestMeta": {
+            "type": "object",
+            "properties": {
+                "current_page": {
+                    "type": "integer"
+                },
+                "limit": {
+                    "type": "integer"
+                },
+                "total_products": {
+                    "type": "integer"
+                }
+            }
+        },
+        "controllers.Response": {
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
                 }
             }
         }
