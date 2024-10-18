@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/AllanM007/simpler-test/helpers"
 	"github.com/AllanM007/simpler-test/models"
@@ -12,7 +13,16 @@ import (
 	"gorm.io/gorm"
 )
 
-type ProductCreateInput struct {
+type Response struct {
+	Status  string `json:"status"`
+	Message string `json:"message"`
+}
+
+type InternalErrorResponse struct {
+	Error string `json:"error"`
+}
+
+type ProductCreateReq struct {
 	Name        string  `json:"name"         binding:"required"`
 	Description string  `json:"description"  binding:"required"`
 	Price       float64 `json:"price"        binding:"required"`
@@ -30,19 +40,20 @@ func ProductsRepository(db *gorm.DB) *ProductHandler {
 }
 
 // CreateProduct godoc
-// @Summary Create products
+// @Summary Create a new product
 // @Tags products
-// @Description create new product
+// @Description create product
 // @Accept  json
 // @Produce json
-// @Success 200
-// @Failure 400
-// @Failure 404
-// @Failure 500
+// @Param params body ProductCreateReq true "Request's body"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 404 {object} Response
+// @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/create-product [post]
 func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 
-	var product ProductCreateInput
+	var product ProductCreateReq
 	if err := ctx.ShouldBindJSON(&product); err != nil {
 		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
@@ -71,17 +82,38 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 
 }
 
-// List Products
-// @Summary Get products
+type ProductData struct {
+	Id          uint64    `json:"id"`
+	Name        string    `json:"name"`
+	Description string    `json:"description"`
+	Price       float64   `json:"price"`
+	Stock       int       `json:"stock"`
+	CreatedAt   time.Time `json:"created_at"`
+}
+
+type RequestMeta struct {
+	CurrentPage int    `json:"current_page"`
+	Limit       int    `json:"limit"`
+	Total       *int64 `json:"total_products"`
+}
+
+type ProductsPaginatedResponse struct {
+	Data   []ProductData
+	Meta   RequestMeta
+	Status string
+}
+
+// Get Products
+// @Summary Get products with paging
 // @Description get all products
 // @Tags products
-// @Param page query string false "Number of page"
-// @Param limit query string false "count in a page"
+// @Param page       query string false "Number of page"        default(1)
+// @Param limit      query string false "Books count in a page" default(10)
 // @Accept  json
 // @Produce json
-// @Success 200
-// @Failure 404
-// @Failure 500
+// @Success 200 {object} ProductsPaginatedResponse
+// @Failure 404 {object} Response
+// @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/products [get]
 func (p ProductHandler) GetProducts(ctx *gin.Context) {
 	page, limit, err := helpers.GetPagingData(ctx)
@@ -100,31 +132,46 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 		return
 	}
 
-	var data = []map[string]interface{}{}
+	var data []ProductData
 
 	for i := 0; i < len(products); i++ {
-		product := map[string]interface{}{
-			"id":          products[i].ID,
-			"name":        products[i].Name,
-			"description": products[i].Description,
-			"stock":       products[i].StockLevel,
+		product := ProductData{
+			Id:          products[i].ID,
+			Name:        products[i].Name,
+			Description: products[i].Description,
+			Stock:       products[i].StockLevel,
 		}
 
 		data = append(data, product)
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "data": data})
+	var count *int64
+	_ = p.DB.Find(&products).Count(count)
+
+	meta := RequestMeta{
+		CurrentPage: page,
+		Limit:       limit,
+		Total:       count,
+	}
+
+	response := ProductsPaginatedResponse{
+		Data: data,
+		Meta: meta,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "data": response})
 }
 
 // GetProductById godoc
-// @Summary Get Product By Id
+// @Summary Get product
 // @Description get product by id
 // @Tags products
+// @Param id       query int false "Product Id"
 // @Accept  json
 // @Produce json
-// @Success 200
-// @Failure 404
-// @Failure 500
+// @Success 200 {object} ProductData
+// @Failure 404 {object} Response
+// @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/product/{id} [get]
 func (p ProductHandler) GetProductById(ctx *gin.Context) {
 	productId := ctx.Param("id")
@@ -140,14 +187,14 @@ func (p ProductHandler) GetProductById(ctx *gin.Context) {
 		return
 	}
 
-	var data = []map[string]interface{}{}
+	var data []ProductData
 
-	productObject := map[string]interface{}{
-		"id":          product.ID,
-		"name":        product.Name,
-		"description": product.Description,
-		"stock":       product.StockLevel,
-		"created_at":  product.CreatedAt,
+	productObject := ProductData{
+		Id:          product.ID,
+		Name:        product.Name,
+		Description: product.Description,
+		Stock:       product.StockLevel,
+		CreatedAt:   product.CreatedAt,
 	}
 
 	data = append(data, productObject)
@@ -155,7 +202,7 @@ func (p ProductHandler) GetProductById(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "data": data})
 }
 
-type ProductUpdateInput struct {
+type ProductUpdateReq struct {
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
 	Price       float64 `json:"price"`
@@ -163,21 +210,23 @@ type ProductUpdateInput struct {
 }
 
 // UpdateProduct godoc
-// @Summary Update A Product
+// @Summary Update product
 // @Description update a product by id
 // @Tags products
+// @Param id       query int false "Product Id"
 // @Accept  json
 // @Produce json
-// @Success 200
-// @Failure 400
-// @Failure 404
-// @Failure 500
+// @Param params body ProductUpdateReq true "Request's body"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 404 {object} Response
+// @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/update-product/{id} [put]
 func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 
 	productId := ctx.Param("id")
 
-	var updateProduct ProductUpdateInput
+	var updateProduct ProductUpdateReq
 	if err := ctx.ShouldBindJSON(&updateProduct); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "error": err.Error()})
 		return
@@ -217,15 +266,16 @@ type ProductSale struct {
 }
 
 // UpdateProduct godoc
-// @Summary Update A Product
-// @Description update a product by id
+// @Summary Product sale
+// @Description  product sale
 // @Tags products
 // @Accept  json
 // @Produce json
-// @Success 200
-// @Failure 400
-// @Failure 404
-// @Failure 500
+// @Param params body ProductSale true "Request's body"
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 404 {object} Response
+// @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/product-sale [put]
 func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 
@@ -266,14 +316,15 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 }
 
 // DeleteProduct godoc
-// @Summary Delete A Product
+// @Summary Delete product
 // @Description delete product by id
 // @Tags products
-// @Accept  json
+// @Param id       query int false "Product Id"
 // @Produce json
-// @Success 200
-// @Failure 404
-// @Failure 500
+// @Success 200 {object} Response
+// @Failure 400 {object} Response
+// @Failure 404 {object} Response
+// @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/delete-product/{id} [delete]
 func (p *ProductHandler) DeleteProduct(ctx *gin.Context) {
 	productId := ctx.Param("id")
