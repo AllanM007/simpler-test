@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/AllanM007/simpler-test/helpers"
 	"github.com/AllanM007/simpler-test/models"
-	"github.com/AllanM007/simpler-test/utilities"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -16,7 +16,7 @@ type ProductCreateInput struct {
 	Name        string  `json:"name"         binding:"required"`
 	Description string  `json:"description"  binding:"required"`
 	Price       float64 `json:"price"        binding:"required"`
-	StockLevel  int     `json:"stockLevel"   binding:"required"`
+	StockLevel  int     `json:"stock"        `
 }
 
 type ProductHandler struct {
@@ -41,14 +41,13 @@ func ProductsRepository(db *gorm.DB) *ProductHandler {
 // @Failure 500
 // @Router /api/v1/create-product [post]
 func (p ProductHandler) CreateProduct(ctx *gin.Context) {
-	log.Println("i was hit")
 
 	var product ProductCreateInput
 	if err := ctx.ShouldBindJSON(&product); err != nil {
+		log.Println(err)
 		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	log.Println("i was hit again")
 
 	newProduct := models.Product{
 		Name:        product.Name,
@@ -56,8 +55,6 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 		Price:       product.Price,
 		StockLevel:  product.StockLevel,
 	}
-
-	log.Println("i was hit again again")
 
 	result := p.DB.Create(&newProduct)
 	if result.Error != nil {
@@ -69,8 +66,6 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 			return
 		}
 	}
-
-	log.Println("i was hit again again again")
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "OK", "message": "Product created successfully!"})
 
@@ -89,13 +84,13 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 // @Failure 500
 // @Router /api/v1/products [get]
 func (p ProductHandler) GetProducts(ctx *gin.Context) {
-	page, limit, err := utilities.GetPagingData(ctx)
+	page, limit, err := helpers.GetPagingData(ctx)
 	if err != nil {
 		return
 	}
 
 	var products []models.Product
-	result := p.DB.Limit(limit).Offset(utilities.GetOffset(page, limit)).Order("id DESC").Find(&products)
+	result := p.DB.Limit(limit).Offset(helpers.GetOffset(page, limit)).Order("id DESC").Find(&products)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"status": "NOT_FOUND", "message": "Products not found!!"})
@@ -117,7 +112,6 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 
 		data = append(data, product)
 	}
-	log.Println(data)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "data": data})
 }
@@ -157,7 +151,6 @@ func (p ProductHandler) GetProductById(ctx *gin.Context) {
 	}
 
 	data = append(data, productObject)
-	log.Println(data)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "data": data})
 }
@@ -284,7 +277,6 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 // @Router /api/v1/delete-product/{id} [delete]
 func (p *ProductHandler) DeleteProduct(ctx *gin.Context) {
 	productId := ctx.Param("id")
-	log.Println(productId)
 
 	var product models.Product
 	result := p.DB.Where("id = ?", productId).Delete(&product)
