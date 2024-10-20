@@ -169,7 +169,7 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 // @Summary Get product
 // @Description get product by id
 // @Tags products
-// @Param id       query int false "Product Id"
+// @Param id path int true "Product Id"
 // @Accept  json
 // @Produce json
 // @Success 200 {object} ProductData
@@ -217,7 +217,7 @@ type ProductUpdateReq struct {
 // @Summary Update product
 // @Description update a product by id
 // @Tags products
-// @Param id       query int false "Product Id"
+// @Param id path int true "Product Id"
 // @Accept  json
 // @Produce json
 // @Param params body ProductUpdateReq true "Request's body"
@@ -325,7 +325,7 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 // @Summary Delete product
 // @Description delete product by id
 // @Tags products
-// @Param id       query int false "Product Id"
+// @Param id path int true "Product Id"
 // @Produce json
 // @Success 200 {object} Response
 // @Failure 400 {object} Response

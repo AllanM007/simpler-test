@@ -57,14 +57,12 @@ definitions:
     type: object
   controllers.ProductsPaginatedResponse:
     properties:
-      data:
+      meta:
+        $ref: '#/definitions/controllers.RequestMeta'
+      products:
         items:
           $ref: '#/definitions/controllers.ProductData'
         type: array
-      meta:
-        $ref: '#/definitions/controllers.RequestMeta'
-      status:
-        type: string
     type: object
   controllers.RequestMeta:
     properties:
@@ -124,8 +122,9 @@ paths:
       description: delete product by id
       parameters:
       - description: Product Id
-        in: query
+        in: path
         name: id
+        required: true
         type: integer
       produces:
       - application/json
@@ -190,8 +189,9 @@ paths:
       description: get product by id
       parameters:
       - description: Product Id
-        in: query
+        in: path
         name: id
+        required: true
         type: integer
       produces:
       - application/json
@@ -252,8 +252,9 @@ paths:
       description: update a product by id
       parameters:
       - description: Product Id
-        in: query
+        in: path
         name: id
+        required: true
         type: integer
       - description: Request's body
         in: body

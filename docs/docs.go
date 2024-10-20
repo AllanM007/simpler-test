@@ -82,7 +82,8 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Product Id",
                         "name": "id",
-                        "in": "query"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -183,7 +184,8 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Product Id",
                         "name": "id",
-                        "in": "query"
+                        "in": "path",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -277,7 +279,8 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Product Id",
                         "name": "id",
-                        "in": "query"
+                        "in": "path",
+                        "required": true
                     },
                     {
                         "description": "Request's body",
@@ -407,17 +410,14 @@ const docTemplate = `{
         "controllers.ProductsPaginatedResponse": {
             "type": "object",
             "properties": {
-                "data": {
+                "meta": {
+                    "$ref": "#/definitions/controllers.RequestMeta"
+                },
+                "products": {
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/controllers.ProductData"
                     }
-                },
-                "meta": {
-                    "$ref": "#/definitions/controllers.RequestMeta"
-                },
-                "status": {
-                    "type": "string"
                 }
             }
         },
