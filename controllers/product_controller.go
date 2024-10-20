@@ -141,6 +141,7 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 			Name:        products[i].Name,
 			Description: products[i].Description,
 			Stock:       products[i].StockLevel,
+			CreatedAt:   products[i].CreatedAt,
 		}
 
 		data = append(data, product)
