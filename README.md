@@ -33,7 +33,7 @@ docker compose up -d
 - The API is documented using Swagger and can be accessed at:
 
 ```
-http://localhost:8080/swagger/index.html
+http://localhost:8080/api/swagger/index.html
 ```
 
 ### Pagination
