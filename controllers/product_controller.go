@@ -93,9 +93,9 @@ type ProductData struct {
 }
 
 type RequestMeta struct {
-	CurrentPage int    `json:"current_page"`
-	Limit       int    `json:"limit"`
-	Total       *int64 `json:"total_products"`
+	CurrentPage int   `json:"current_page"`
+	Limit       int   `json:"limit"`
+	Total       int64 `json:"total_products"`
 }
 
 type ProductsPaginatedResponse struct {
@@ -148,8 +148,13 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 	}
 
 	//get all products count
-	var count *int64
-	_ = p.DB.Find(&products).Count(count)
+	var count int64
+	tx := p.DB.Find(&products).Count(&count)
+	if tx.Error != nil {
+		return
+	}
+
+	log.Println("count is ", count)
 
 	meta := RequestMeta{
 		CurrentPage: page,
