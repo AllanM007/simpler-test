@@ -99,8 +99,8 @@ type RequestMeta struct {
 }
 
 type ProductsPaginatedResponse struct {
-	Data []ProductData
-	Meta RequestMeta
+	Products []ProductData `json:"products"`
+	Meta     RequestMeta   `json:"meta"`
 }
 
 // Get Products
@@ -158,8 +158,8 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 	}
 
 	response := ProductsPaginatedResponse{
-		Data: data,
-		Meta: meta,
+		Products: data,
+		Meta:     meta,
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "data": response})
