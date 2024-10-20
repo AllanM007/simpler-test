@@ -67,6 +67,7 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 		StockLevel:  product.StockLevel,
 	}
 
+	//insert new product item to database
 	result := p.DB.Create(&newProduct)
 	if result.Error != nil {
 		if strings.Contains(result.Error.Error(), "duplicate key value") {
@@ -83,7 +84,7 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 }
 
 type ProductData struct {
-	Id          uint64    `json:"id"`
+	Id          uint      `json:"id"`
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Price       float64   `json:"price"`
@@ -98,9 +99,8 @@ type RequestMeta struct {
 }
 
 type ProductsPaginatedResponse struct {
-	Data   []ProductData
-	Meta   RequestMeta
-	Status string
+	Data []ProductData
+	Meta RequestMeta
 }
 
 // Get Products
@@ -121,6 +121,7 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 		return
 	}
 
+	//get products based on pagination parameters
 	var products []models.Product
 	result := p.DB.Limit(limit).Offset(helpers.GetOffset(page, limit)).Order("id DESC").Find(&products)
 	if result.Error != nil {
@@ -145,6 +146,7 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 		data = append(data, product)
 	}
 
+	//get all products count
 	var count *int64
 	_ = p.DB.Find(&products).Count(count)
 
@@ -176,6 +178,7 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 func (p ProductHandler) GetProductById(ctx *gin.Context) {
 	productId := ctx.Param("id")
 
+	//get product using id
 	var product models.Product
 	result := p.DB.Where("id = ?", productId).First(&product)
 	if result.Error != nil {
@@ -232,6 +235,7 @@ func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 		return
 	}
 
+	//get product by id
 	var product models.Product
 	result := p.DB.Where("id = ?", productId).First(&product)
 	if result.Error != nil {
@@ -246,6 +250,7 @@ func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 	product.Name = updateProduct.Name
 	product.Description = updateProduct.Description
 
+	//update existing products
 	updateResult := p.DB.Save(&product)
 	if updateResult.Error != nil {
 		if strings.Contains(updateResult.Error.Error(), "duplicate key value") {
@@ -296,19 +301,19 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 		return
 	}
 
+	//check if product stock is less than sale quantity
 	if productSale.Count > product.StockLevel {
 		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "FORBIDDEN", "message": "Stock level lower than purchase quantity"})
 		return
 	}
 
+	// dedcut sale quantity from product stock
 	product.StockLevel = product.StockLevel - productSale.Count
 
 	updateResult := p.DB.Save(&product)
 	if updateResult.Error != nil {
-
 		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
 		return
-
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "message": "Product sale successful!"})
@@ -329,6 +334,7 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 func (p *ProductHandler) DeleteProduct(ctx *gin.Context) {
 	productId := ctx.Param("id")
 
+	//delete product with specified id
 	var product models.Product
 	result := p.DB.Where("id = ?", productId).Delete(&product)
 	if result.Error != nil {

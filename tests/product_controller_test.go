@@ -167,7 +167,6 @@ func TestUpdateProduct(t *testing.T) {
 	router := routes.Router()
 
 	product := models.Product{
-		ID:          1,
 		Name:        "Pagani",
 		Description: "This is the updated description of koenigsegg to pagani!!",
 		Price:       25.40,
