@@ -11,7 +11,6 @@ import (
 func init() {
 	os.Setenv("TZ", "Africa/Nairobi")
 	initializers.LoadEnvVariables()
-	initializers.InitDb()
 }
 
 func main() {

@@ -48,9 +48,9 @@ go test -v ./...
 
 ### Endpoints
 
-- `POST /api/v1/create-product`: Create a new product.
+- `POST /api/v1/products`: Create a new product.
 - `GET /api/v1/products`: Get all products.
 - `GET /api/v1/product/:id`: Get a single product.
-- `PUT /api/v1/update-product/:id`: Update a product.
-- `DELETE /api/v1/delete-product/:id`: Delete a product.
-- `POST /api/v1/product-sale`: Product Sale.
+- `PUT /api/v1/product/:id`: Update a product.
+- `DELETE /api/v1/product/:id`: Delete a product.
+- `PUT /api/v1/product/:id/sale`: Product Sale.

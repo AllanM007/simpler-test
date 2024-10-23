@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/AllanM007/simpler-test/controllers"
@@ -25,14 +26,18 @@ func Router() *gin.Engine {
 	app.Use(middleware.CORSMiddleware())
 
 	db := initializers.InitDb()
+	err := initializers.MigrateDB()
+	if err != nil {
+		log.Fatalf("database migration failed")
+	}
 	ProductsRepo := controllers.ProductsRepository(db)
 
-	app.POST("/api/v1/create-product", ProductsRepo.CreateProduct)
+	app.POST("/api/v1/products", ProductsRepo.CreateProduct)
 	app.GET("/api/v1/products", ProductsRepo.GetProducts)
 	app.GET("/api/v1/product/:id", ProductsRepo.GetProductById)
-	app.PUT("/api/v1/update-product/:id", ProductsRepo.UpdateProduct)
-	app.PUT("/api/v1/product-sale", ProductsRepo.ProductSale)
-	app.DELETE("/api/v1/delete-product/:id", ProductsRepo.DeleteProduct)
+	app.PUT("/api/v1/product/:id", ProductsRepo.UpdateProduct)
+	app.PUT("/api/v1/product/:id/sale", ProductsRepo.ProductSale)
+	app.DELETE("/api/v1/product/:id", ProductsRepo.DeleteProduct)
 
 	app.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 

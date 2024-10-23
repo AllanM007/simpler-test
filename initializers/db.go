@@ -2,6 +2,7 @@ package initializers
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/AllanM007/simpler-test/models"
@@ -9,11 +10,16 @@ import (
 	"gorm.io/gorm"
 )
 
-var Db *gorm.DB
+var DB *gorm.DB
 
 func InitDb() *gorm.DB {
-	Db, _ = ConnectDB()
-	return Db
+	var err error
+	DB, err = ConnectDB()
+	if err != nil {
+		log.Fatalf("Connection to database failed")
+	}
+	fmt.Printf("Database connection successfully established")
+	return DB
 }
 
 func ConnectDB() (*gorm.DB, error) {
@@ -22,11 +28,15 @@ func ConnectDB() (*gorm.DB, error) {
 
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		fmt.Printf("Error connecting to database : error=%v", err)
-		return nil, nil
+		return nil, fmt.Errorf("error connecting to database : error=%w", err)
 	}
 
-	db.AutoMigrate(&models.Product{})
-
 	return db, nil
+}
+
+func MigrateDB() error {
+	if DB == nil {
+		return fmt.Errorf("no database connection available")
+	}
+	return DB.AutoMigrate(&models.Product{})
 }
