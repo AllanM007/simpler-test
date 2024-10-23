@@ -50,7 +50,7 @@ go test -v ./...
 
 - `POST /api/v1/products`: Create a new product.
 - `GET /api/v1/products`: Get all products.
-- `GET /api/v1/product/:id`: Get a single product.
-- `PUT /api/v1/product/:id`: Update a product.
-- `DELETE /api/v1/product/:id`: Delete a product.
-- `PUT /api/v1/product/:id/sale`: Product Sale.
+- `GET /api/v1/products/:id`: Get a single product.
+- `PUT /api/v1/products/:id`: Update a product.
+- `DELETE /api/v1/products/:id`: Delete a product.
+- `PUT /api/v1/products/:id/sale`: Product Sale.

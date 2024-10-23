@@ -49,7 +49,7 @@ func ProductsRepository(db *gorm.DB) *ProductHandler {
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
-// @Router /api/v1/product [post]
+// @Router /api/v1/products [post]
 func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 
 	var product ProductCreateReq
@@ -176,7 +176,7 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 // @Success 200 {object} ProductData
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
-// @Router /api/v1/product/{id} [get]
+// @Router /api/v1/products/{id} [get]
 func (p ProductHandler) GetProductById(ctx *gin.Context) {
 	productId := ctx.Param("id")
 
@@ -226,7 +226,7 @@ type ProductUpdateReq struct {
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
-// @Router /api/v1/product/{id} [put]
+// @Router /api/v1/products/{id} [put]
 func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 
 	productId := ctx.Param("id")
@@ -283,7 +283,7 @@ type ProductSale struct {
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
-// @Router /api/v1/product/{id}/sale [put]
+// @Router /api/v1/products/{id}/sale [put]
 func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 
 	var productSale ProductSale
@@ -332,7 +332,7 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 // @Failure 400 {object} Response
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
-// @Router /api/v1/product/{id} [delete]
+// @Router /api/v1/products/{id} [delete]
 func (p *ProductHandler) DeleteProduct(ctx *gin.Context) {
 	productId := ctx.Param("id")
 

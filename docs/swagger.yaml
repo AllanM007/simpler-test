@@ -83,7 +83,40 @@ definitions:
 info:
   contact: {}
 paths:
-  /api/v1/product:
+  /api/v1/products:
+    get:
+      consumes:
+      - application/json
+      description: get all products
+      parameters:
+      - default: "1"
+        description: Number of page
+        in: query
+        name: page
+        type: string
+      - default: "10"
+        description: Books count in a page
+        in: query
+        name: limit
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/controllers.ProductsPaginatedResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/controllers.Response'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/controllers.InternalErrorResponse'
+      summary: Get products with paging
+      tags:
+      - products
     post:
       consumes:
       - application/json
@@ -117,7 +150,7 @@ paths:
       summary: Create a new product
       tags:
       - products
-  /api/v1/product/{id}:
+  /api/v1/products/{id}:
     delete:
       description: delete product by id
       parameters:
@@ -214,7 +247,7 @@ paths:
       summary: Update product
       tags:
       - products
-  /api/v1/product/{id}/sale:
+  /api/v1/products/{id}/sale:
     put:
       consumes:
       - application/json
@@ -246,40 +279,6 @@ paths:
           schema:
             $ref: '#/definitions/controllers.InternalErrorResponse'
       summary: Product sale
-      tags:
-      - products
-  /api/v1/products:
-    get:
-      consumes:
-      - application/json
-      description: get all products
-      parameters:
-      - default: "1"
-        description: Number of page
-        in: query
-        name: page
-        type: string
-      - default: "10"
-        description: Books count in a page
-        in: query
-        name: limit
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/controllers.ProductsPaginatedResponse'
-        "404":
-          description: Not Found
-          schema:
-            $ref: '#/definitions/controllers.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/controllers.InternalErrorResponse'
-      summary: Get products with paging
       tags:
       - products
 swagger: "2.0"

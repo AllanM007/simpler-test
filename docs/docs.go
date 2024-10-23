@@ -15,7 +15,56 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/product": {
+        "/api/v1/products": {
+            "get": {
+                "description": "get all products",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "products"
+                ],
+                "summary": "Get products with paging",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "default": "1",
+                        "description": "Number of page",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "default": "10",
+                        "description": "Books count in a page",
+                        "name": "limit",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.ProductsPaginatedResponse"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.Response"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/controllers.InternalErrorResponse"
+                        }
+                    }
+                }
+            },
             "post": {
                 "description": "create product",
                 "consumes": [
@@ -67,7 +116,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/product/{id}": {
+        "/api/v1/products/{id}": {
             "get": {
                 "description": "get product by id",
                 "consumes": [
@@ -213,7 +262,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/product/{id}/sale": {
+        "/api/v1/products/{id}/sale": {
             "put": {
                 "description": "product sale",
                 "consumes": [
@@ -248,57 +297,6 @@ const docTemplate = `{
                         "description": "Bad Request",
                         "schema": {
                             "$ref": "#/definitions/controllers.Response"
-                        }
-                    },
-                    "404": {
-                        "description": "Not Found",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.InternalErrorResponse"
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/products": {
-            "get": {
-                "description": "get all products",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "products"
-                ],
-                "summary": "Get products with paging",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "default": "1",
-                        "description": "Number of page",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "default": "10",
-                        "description": "Books count in a page",
-                        "name": "limit",
-                        "in": "query"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/controllers.ProductsPaginatedResponse"
                         }
                     },
                     "404": {
