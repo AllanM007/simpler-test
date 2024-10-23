@@ -26,7 +26,10 @@ func Setup() {
 		log.Println("error loading env file")
 		log.Fatal(err)
 	}
-	initializers.InitDb()
+	_, err = initializers.ConnectDB()
+	if err != nil {
+		log.Fatalf("database connection failed")
+	}
 	gin.SetMode(gin.ReleaseMode)
 }
 

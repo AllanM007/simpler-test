@@ -25,11 +25,18 @@ func Router() *gin.Engine {
 	// enable cors middleware to apply to all routes
 	app.Use(middleware.CORSMiddleware())
 
-	db := initializers.InitDb()
-	err := initializers.MigrateDB()
+	//initialize database connection
+	db, err := initializers.ConnectDB()
+	if err != nil {
+		log.Fatalf("database connection failed")
+	}
+
+	//initialize database migration from models
+	err = initializers.MigrateDB(db)
 	if err != nil {
 		log.Fatalf("database migration failed")
 	}
+
 	ProductsRepo := controllers.ProductsRepository(db)
 
 	app.POST("/api/v1/products", ProductsRepo.CreateProduct)
