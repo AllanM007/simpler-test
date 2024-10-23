@@ -54,7 +54,7 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 
 	var product ProductCreateReq
 	if err := ctx.ShouldBindJSON(&product); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "error": err.Error()})
 		return
 	}
 
