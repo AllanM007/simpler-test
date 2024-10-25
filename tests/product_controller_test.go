@@ -68,7 +68,7 @@ func TestCreateProduct(t *testing.T) {
 	if err != nil {
 		t.Fatalf("error marshalling json %v", err)
 	}
-	request, err := http.NewRequest(http.MethodPost, "/api/v1/create-product", bytes.NewBuffer(jsonValue))
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/products", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		t.Fatalf("error buidling request: %v", err)
 	}
@@ -90,7 +90,7 @@ func TestCreateDuplicateProduct(t *testing.T) {
 		t.Fatalf("error marshalling json %v", err)
 	}
 
-	request, err := http.NewRequest(http.MethodPost, "/api/v1/create-product", bytes.NewBuffer(jsonValue))
+	request, err := http.NewRequest(http.MethodPost, "/api/v1/products", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		t.Fatalf("error buidling request: %v", err)
 	}
@@ -131,7 +131,7 @@ func TestGetProductById(t *testing.T) {
 
 	recorder := httptest.NewRecorder()
 
-	request, err := http.NewRequest(http.MethodGet, "/api/v1/product/1", nil)
+	request, err := http.NewRequest(http.MethodGet, "/api/v1/products/1", nil)
 	if err != nil {
 		t.Fatalf("error building request: %v", err)
 	}
@@ -154,7 +154,7 @@ func TestGetNonExistentProduct(t *testing.T) {
 
 	recorder := httptest.NewRecorder()
 
-	request, err := http.NewRequest(http.MethodGet, "/api/v1/product/1000001", nil)
+	request, err := http.NewRequest(http.MethodGet, "/api/v1/products/1000001", nil)
 	if err != nil {
 		t.Fatalf("error building request: %v", err)
 	}
@@ -180,7 +180,7 @@ func TestUpdateProduct(t *testing.T) {
 		t.Fatalf("error mashalling json %v", err)
 	}
 
-	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("/api/v1/update-product/%d", product.ID), bytes.NewBuffer(jsonValue))
+	request, err := http.NewRequest(http.MethodPut, fmt.Sprintf("/api/v1/products/%d", product.ID), bytes.NewBuffer(jsonValue))
 	if err != nil {
 		t.Fatalf("error building request: %v", err)
 	}
@@ -189,7 +189,7 @@ func TestUpdateProduct(t *testing.T) {
 	assert.Equal(t, http.StatusOK, recorder.Code)
 
 	//test update for non-existent item
-	requestNotFound, err := http.NewRequest(http.MethodPut, "/api/v1/update-product/1000001", bytes.NewBuffer(jsonValue))
+	requestNotFound, err := http.NewRequest(http.MethodPut, "/api/v1/products/1000001", bytes.NewBuffer(jsonValue))
 	if err != nil {
 		t.Fatalf("error building request: %v", err)
 	}
@@ -213,9 +213,9 @@ func TestProductSale(t *testing.T) {
 		t.Fatalf("error mashalling json %v", err)
 	}
 
-	request, err := http.NewRequest(http.MethodPut, "/api/v1/product-sale", bytes.NewBuffer(jsonValue))
+	request, err := http.NewRequest(http.MethodPut, "/api/v1/products/1/sale", bytes.NewBuffer(jsonValue))
 	if err != nil {
-		t.Fatalf("error vuilding request %v", err)
+		t.Fatalf("error building request %v", err)
 	}
 
 	recorder := httptest.NewRecorder()
@@ -228,9 +228,9 @@ func TestDeleteProduct(t *testing.T) {
 	Setup()
 	router := routes.Router()
 
-	request, err := http.NewRequest(http.MethodDelete, "/api/v1/delete-product/1", nil)
+	request, err := http.NewRequest(http.MethodDelete, "/api/v1/products/1", nil)
 	if err != nil {
-		t.Fatalf("error vuilding request %v", err)
+		t.Fatalf("error building request %v", err)
 	}
 
 	recorder := httptest.NewRecorder()
