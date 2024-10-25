@@ -15,6 +15,8 @@ import (
 func Router() *gin.Engine {
 	app := gin.Default()
 
+	gin.SetMode(gin.ReleaseMode)
+
 	app.GET("/ping", func(ctx *gin.Context) {
 		ctx.String(
 			http.StatusOK,
