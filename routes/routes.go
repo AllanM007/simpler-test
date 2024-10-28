@@ -10,9 +10,10 @@ import (
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
+	"gorm.io/gorm"
 )
 
-func Router() *gin.Engine {
+func Router(db *gorm.DB) *gin.Engine {
 	app := gin.Default()
 
 	gin.SetMode(gin.ReleaseMode)
@@ -28,13 +29,13 @@ func Router() *gin.Engine {
 	app.Use(middleware.CORSMiddleware())
 
 	//initialize database connection
-	db, err := initializers.ConnectDB()
-	if err != nil {
-		log.Fatalf("database connection failed")
-	}
+	// db, err := initializers.ConnectDB()
+	// if err != nil {
+	// 	log.Fatalf("database connection failed")
+	// }
 
 	//initialize database migration from models
-	err = initializers.MigrateDB(db)
+	err := initializers.MigrateDB(db)
 	if err != nil {
 		log.Fatalf("database migration failed")
 	}
