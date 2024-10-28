@@ -127,7 +127,7 @@ func (p ProductHandler) GetProducts(ctx *gin.Context) {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"status": "NOT_FOUND", "message": "Products not found!!"})
 			return
 		}
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"err": result.Error})
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": result.Error})
 		return
 	}
 
@@ -188,7 +188,7 @@ func (p ProductHandler) GetProductById(ctx *gin.Context) {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"status": "NOT_FOUND", "message": "Product not found!!"})
 			return
 		}
-		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"err": result.Error})
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": result.Error})
 		return
 	}
 

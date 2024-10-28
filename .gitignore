@@ -1,2 +1,4 @@
 .env
 tmp/
+data/
+.DS_store
