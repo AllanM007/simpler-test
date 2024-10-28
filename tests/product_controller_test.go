@@ -2,26 +2,89 @@ package tests
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
+	"fmt"
+	"log"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 
 	"github.com/AllanM007/simpler-test/controllers"
 	"github.com/AllanM007/simpler-test/models"
 	"github.com/AllanM007/simpler-test/routes"
+	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
+	"github.com/testcontainers/testcontainers-go"
+	"github.com/testcontainers/testcontainers-go/wait"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
-var product = models.Product{
-	Name:        "Test Product",
-	Description: "This is a test description for testing product creation",
-	Price:       25.50,
-	StockLevel:  100,
+func SetupTestContainerDB() (*gorm.DB, func(), error) {
+	ctx := context.Background()
+	req := testcontainers.ContainerRequest{
+		Image:        "postgres:13",
+		ExposedPorts: []string{"5432/tcp"},
+		Env: map[string]string{
+			"POSTGRES_USER":     "user",
+			"POSTGRES_PASSWORD": "password",
+			"POSTGRES_DB":       "testdb",
+		},
+		WaitingFor: wait.ForListeningPort("5432/tcp"),
+	}
+	pgContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
+		ContainerRequest: req,
+		Started:          true,
+	})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	host, _ := pgContainer.Host(ctx)
+	port, _ := pgContainer.MappedPort(ctx, "5432")
+
+	dsn := fmt.Sprintf("host=%s port=%s user=user password=password dbname=testdb sslmode=disable", host, port.Port())
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		return nil, nil, err
+	}
+
+	cleanup := func() {
+		pgContainer.Terminate(ctx)
+	}
+
+	return db, cleanup, nil
+}
+
+var db *gorm.DB
+var router *gin.Engine
+var cleanup func()
+
+// TestMain sets up the test container for all tests and cleans up afterward.
+func TestMain(m *testing.M) {
+	// Setup: Initialize the PostgreSQL container
+	var err error
+	db, cleanup, err = SetupTestContainerDB()
+	if err != nil {
+		log.Fatalf("Could not set up postgres test container: %v", err)
+	}
+
+	//initialize gin router
+	router = routes.Router(db)
+
+	// Run tests
+	code := m.Run()
+
+	// Teardown the test container
+	cleanup()
+
+	// Exit with the code returned by m.Run()
+	os.Exit(code)
 }
 
 func TestPing(t *testing.T) {
-	router := routes.Router()
 
 	recorder := httptest.NewRecorder()
 
@@ -36,8 +99,14 @@ func TestPing(t *testing.T) {
 	assert.Equal(t, "pong", recorder.Body.String())
 }
 
+var product = models.Product{
+	Name:        "Test Product",
+	Description: "This is a test description for testing product creation",
+	Price:       25.50,
+	StockLevel:  100,
+}
+
 func TestCreateProduct(t *testing.T) {
-	router := routes.Router()
 
 	recorder := httptest.NewRecorder()
 
@@ -57,7 +126,6 @@ func TestCreateProduct(t *testing.T) {
 }
 
 func TestCreateDuplicateProduct(t *testing.T) {
-	router := routes.Router()
 
 	recorder := httptest.NewRecorder()
 
@@ -82,7 +150,6 @@ type ProductsResponse struct {
 }
 
 func TestGetProducts(t *testing.T) {
-	router := routes.Router()
 
 	recorder := httptest.NewRecorder()
 
@@ -109,7 +176,6 @@ type ProductResponse struct {
 }
 
 func TestGetProductById(t *testing.T) {
-	router := routes.Router()
 
 	recorder := httptest.NewRecorder()
 
@@ -131,7 +197,6 @@ func TestGetProductById(t *testing.T) {
 }
 
 func TestGetNonExistentProduct(t *testing.T) {
-	router := routes.Router()
 
 	recorder := httptest.NewRecorder()
 
@@ -146,7 +211,6 @@ func TestGetNonExistentProduct(t *testing.T) {
 }
 
 func TestUpdateProduct(t *testing.T) {
-	router := routes.Router()
 
 	product := models.Product{
 		Name:        "Pagani",
@@ -178,7 +242,6 @@ func TestUpdateProduct(t *testing.T) {
 }
 
 func TestProductSale(t *testing.T) {
-	router := routes.Router()
 
 	productSale := controllers.ProductSale{
 		Id:    1,
@@ -201,7 +264,6 @@ func TestProductSale(t *testing.T) {
 }
 
 func TestDeleteProduct(t *testing.T) {
-	router := routes.Router()
 
 	request, err := http.NewRequest(http.MethodDelete, "/api/v1/products/1", nil)
 	if err != nil {
