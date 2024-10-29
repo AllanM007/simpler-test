@@ -16,6 +16,7 @@ import (
 func Router(db *gorm.DB) *gin.Engine {
 	app := gin.Default()
 
+	// set gin mode to release
 	gin.SetMode(gin.ReleaseMode)
 
 	app.GET("/ping", func(ctx *gin.Context) {
@@ -27,12 +28,6 @@ func Router(db *gorm.DB) *gin.Engine {
 
 	// enable cors middleware to apply to all routes
 	app.Use(middleware.CORSMiddleware())
-
-	//initialize database connection
-	// db, err := initializers.ConnectDB()
-	// if err != nil {
-	// 	log.Fatalf("database connection failed")
-	// }
 
 	//initialize database migration from models
 	err := initializers.MigrateDB(db)

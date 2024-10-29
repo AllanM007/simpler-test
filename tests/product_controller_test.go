@@ -99,7 +99,7 @@ func TestPing(t *testing.T) {
 	assert.Equal(t, "pong", recorder.Body.String())
 }
 
-var product = models.Product{
+var product = controllers.ProductCreateReq{
 	Name:        "Test Product",
 	Description: "This is a test description for testing product creation",
 	Price:       25.50,
