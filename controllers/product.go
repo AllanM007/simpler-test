@@ -9,12 +9,18 @@ import (
 	"github.com/AllanM007/simpler-test/helpers"
 	"github.com/AllanM007/simpler-test/models"
 	"github.com/gin-gonic/gin"
+	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
 
 type Response struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`
+}
+
+type InvalidRequestResponse struct {
+	Errors map[string]string `json:"errors"`
+	Status string            `json:"status"`
 }
 
 type InternalErrorResponse struct {
@@ -24,8 +30,8 @@ type InternalErrorResponse struct {
 type ProductCreateReq struct {
 	Name        string  `json:"name"         binding:"required"`
 	Description string  `json:"description"  binding:"required"`
-	Price       float64 `json:"price"        binding:"required"`
-	StockLevel  int     `json:"stock"        `
+	Price       float64 `json:"price"        binding:"required,gt=0"`
+	StockLevel  int     `json:"stock"        binding:"required,gt=0"`
 }
 
 type ProductHandler struct {
@@ -46,7 +52,7 @@ func ProductsRepository(db *gorm.DB) *ProductHandler {
 // @Produce json
 // @Param params body ProductCreateReq true "Request's body"
 // @Success 200 {object} Response
-// @Failure 400 {object} Response
+// @Failure 400 {object} InvalidRequestResponse
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/products [post]
@@ -54,8 +60,11 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 
 	var product ProductCreateReq
 	if err := ctx.ShouldBindJSON(&product); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "error": err.Error()})
-		return
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			errors := formatValidationError(validationErrors)
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "errors": errors})
+			return
+		}
 	}
 
 	newProduct := models.Product{
@@ -223,7 +232,7 @@ type ProductUpdateReq struct {
 // @Produce json
 // @Param params body ProductUpdateReq true "Request's body"
 // @Success 200 {object} Response
-// @Failure 400 {object} Response
+// @Failure 400 {object} InvalidRequestResponse
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/products/{id} [put]
@@ -231,10 +240,15 @@ func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 
 	productId := ctx.Param("id")
 
-	var updateProduct ProductUpdateReq
-	if err := ctx.ShouldBindJSON(&updateProduct); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "error": err.Error()})
-		return
+	var updateProductReq ProductUpdateReq
+	if err := ctx.ShouldBindJSON(&updateProductReq); err != nil {
+		if err := ctx.ShouldBindJSON(&updateProductReq); err != nil {
+			if validationErrors, ok := err.(validator.ValidationErrors); ok {
+				errors := formatValidationError(validationErrors)
+				ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "errors": errors})
+				return
+			}
+		}
 	}
 
 	//get product by id
@@ -249,8 +263,8 @@ func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 		return
 	}
 
-	product.Name = updateProduct.Name
-	product.Description = updateProduct.Description
+	product.Name = updateProductReq.Name
+	product.Description = updateProductReq.Description
 
 	//update existing products
 	updateResult := p.DB.Save(&product)
@@ -280,20 +294,25 @@ type ProductSale struct {
 // @Produce json
 // @Param params body ProductSale true "Request's body"
 // @Success 200 {object} Response
-// @Failure 400 {object} Response
+// @Failure 400 {object} InvalidRequestResponse
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/products/{id}/sale [put]
 func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 
-	var productSale ProductSale
-	if err := ctx.ShouldBindJSON(&productSale); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "error": err.Error()})
-		return
+	var productSaleReq ProductSale
+	if err := ctx.ShouldBindJSON(&productSaleReq); err != nil {
+		if err := ctx.ShouldBindJSON(&productSaleReq); err != nil {
+			if validationErrors, ok := err.(validator.ValidationErrors); ok {
+				errors := formatValidationError(validationErrors)
+				ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "errors": errors})
+				return
+			}
+		}
 	}
 
 	var product models.Product
-	result := p.DB.Where("id = ?", productSale.Id).First(&product)
+	result := p.DB.Where("id = ?", productSaleReq.Id).First(&product)
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 			ctx.AbortWithStatusJSON(http.StatusNotFound, gin.H{"status": "NOT_FOUND", "message": "Product not found!!"})
@@ -304,13 +323,13 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 	}
 
 	//check if product stock is less than sale quantity
-	if productSale.Count > product.StockLevel {
+	if productSaleReq.Count > product.StockLevel {
 		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "FORBIDDEN", "message": "Stock level lower than purchase quantity"})
 		return
 	}
 
 	// dedcut sale quantity from product stock
-	product.StockLevel = product.StockLevel - productSale.Count
+	product.StockLevel = product.StockLevel - productSaleReq.Count
 
 	updateResult := p.DB.Save(&product)
 	if updateResult.Error != nil {
@@ -329,7 +348,7 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 // @Param id path int true "Product Id"
 // @Produce json
 // @Success 200 {object} Response
-// @Failure 400 {object} Response
+// @Failure 400 {object} InvalidRequestResponse
 // @Failure 404 {object} Response
 // @Failure 500 {object} InternalErrorResponse
 // @Router /api/v1/products/{id} [delete]
@@ -348,4 +367,22 @@ func (p *ProductHandler) DeleteProduct(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "message": "Product deleted successfully!"})
+}
+
+func formatValidationError(errs validator.ValidationErrors) map[string]string {
+	errorMessages := make(map[string]string)
+	for _, err := range errs {
+		field := err.Field()
+		switch err.Tag() {
+		case "required":
+			errorMessages[field] = field + " is required"
+		case "min":
+			errorMessages[field] = field + " value is too low"
+		case "max":
+			errorMessages[field] = field + " value is too high"
+		default:
+			errorMessages[field] = "Invalid value for " + field
+		}
+	}
+	return errorMessages
 }
