@@ -9,11 +9,6 @@ import (
 	"github.com/AllanM007/simpler-test/routes"
 )
 
-func init() {
-	os.Setenv("TZ", "Africa/Nairobi")
-	initializers.LoadEnvVariables()
-}
-
 // @title           Simpler Test API
 // @version         1.0
 // @description     This is a product resource microservice RESTful API.
@@ -34,6 +29,10 @@ func init() {
 // @externalDocs.description  OpenAPI
 // @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
+
+	os.Setenv("TZ", "Africa/Nairobi")
+	initializers.LoadEnvVariables()
+
 	db, err := initializers.ConnectDB()
 	if err != nil {
 		log.Fatalf("failed to initalize database: %v", err)
