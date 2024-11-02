@@ -10,6 +10,7 @@ import (
 	"net/http/httptest"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/AllanM007/simpler-test/controllers"
 	"github.com/AllanM007/simpler-test/models"
@@ -32,7 +33,7 @@ func SetupTestContainerDB() (*gorm.DB, func(), error) {
 			"POSTGRES_PASSWORD": "password",
 			"POSTGRES_DB":       "testdb",
 		},
-		WaitingFor: wait.ForListeningPort("5432/tcp"),
+		WaitingFor: wait.ForListeningPort("5432/tcp").WithStartupTimeout(60 * time.Second),
 	}
 	pgContainer, err := testcontainers.GenericContainer(ctx, testcontainers.GenericContainerRequest{
 		ContainerRequest: req,
@@ -73,6 +74,16 @@ func TestMain(m *testing.M) {
 
 	//initialize gin router
 	router = routes.Router(db)
+
+	// Wait for the server to be ready with a ping check
+	maxRetries := 10
+	for i := 0; i < maxRetries; i++ {
+		resp, err := http.Get("http://localhost:8080/ping")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			break
+		}
+		time.Sleep(1 * time.Second)
+	}
 
 	// Run tests
 	code := m.Run()

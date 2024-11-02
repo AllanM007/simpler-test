@@ -37,5 +37,5 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed to initalize database: %v", err)
 	}
-	routes.Router(db)
+	routes.Router(db).Run(":8080")
 }

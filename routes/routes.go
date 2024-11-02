@@ -46,7 +46,5 @@ func Router(db *gorm.DB) *gin.Engine {
 
 	app.GET("/api/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	app.Run(":8080")
-
 	return app
 }
