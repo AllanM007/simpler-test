@@ -1,3 +1,7 @@
+[![Workflow for Go Standard Action](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml/badge.svg)](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml)
+
+<!-- [![codecov](https://codecov.io/gh/codecov/go-Standard/branch/master/graph/badge.svg)](https://codecov.io/gh/codecov/go-Standard) -->
+
 ### Backend Engineer Take Home Test @Simpler
 
 - This is a simple CRUD REST API written in Go for a product resource microservice built using golang(gin,gorm) and using postgres as a database.
@@ -54,3 +58,7 @@ go test -v ./...
 - `PUT /api/v1/products/:id`: Update a product.
 - `DELETE /api/v1/products/:id`: Delete a product.
 - `PUT /api/v1/products/:id/sale`: Product Sale.
+
+### CI/CD
+
+- The project has a ci/cd pipeline implemented using <strong>GitHub Actions</strong> that builds, tests and deploys the service as a container to [Docker Hub](https://hub.docker.com/r/mwarangu/simpler-test) .
