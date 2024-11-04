@@ -1,6 +1,4 @@
-[![Workflow for Go Standard Action](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml/badge.svg)](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml)
-
-<!-- [![codecov](https://codecov.io/gh/codecov/go-Standard/branch/master/graph/badge.svg)](https://codecov.io/gh/codecov/go-Standard) -->
+[![Workflow for Go Standard Action](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml/badge.svg)](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml) [![codecov](https://codecov.io/github/AllanM007/simpler-test/graph/badge.svg?token=W5ZXQ6HFO0)](https://codecov.io/github/AllanM007/simpler-test)
 
 ### Backend Engineer Take Home Test @Simpler
 
@@ -61,4 +59,4 @@ go test -v ./...
 
 ### CI/CD
 
-- The project has a ci/cd pipeline implemented using <strong>GitHub Actions</strong> that builds, tests and deploys the service as a container to [Docker Hub](https://hub.docker.com/r/mwarangu/simpler-test) .
+- The project has a ci/cd pipeline implemented using <strong>GitHub Actions</strong> that builds, tests and deploys the service to a container registry:  [Docker Hub](https://hub.docker.com/r/mwarangu/simpler-test) .
