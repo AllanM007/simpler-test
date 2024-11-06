@@ -35,7 +35,7 @@ func main() {
 
 	db, err := initializers.ConnectDB()
 	if err != nil {
-		log.Fatalf("failed to initalize database: %v", err)
+		log.Fatalf("failed to initialize database: %v", err)
 	}
 	routes.Router(db).Run(":8080")
 }

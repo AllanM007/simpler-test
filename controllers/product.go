@@ -278,7 +278,7 @@ func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 		}
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "message": "Product updated succesfully!"})
+	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "message": "Product updated successfully!"})
 }
 
 type ProductSale struct {

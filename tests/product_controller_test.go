@@ -127,7 +127,7 @@ func TestCreateProduct(t *testing.T) {
 	}
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/products", bytes.NewBuffer(jsonValue))
 	if err != nil {
-		t.Fatalf("error buidling request: %v", err)
+		t.Fatalf("error building request: %v", err)
 	}
 
 	router.ServeHTTP(recorder, request)
@@ -147,7 +147,7 @@ func TestCreateDuplicateProduct(t *testing.T) {
 
 	request, err := http.NewRequest(http.MethodPost, "/api/v1/products", bytes.NewBuffer(jsonValue))
 	if err != nil {
-		t.Fatalf("error buidling request: %v", err)
+		t.Fatalf("error building request: %v", err)
 	}
 
 	router.ServeHTTP(recorder, request)

@@ -25,5 +25,5 @@ func TestDBConnection(t *testing.T) {
 		t.Fatalf("Failed to execute version statement query: %v", err)
 	}
 
-	log.Printf("Succesfully connected to database. Version: %s", version)
+	log.Printf("Successfully connected to database. Version: %s", version)
 }

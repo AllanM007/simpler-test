@@ -1,4 +1,4 @@
-[![Workflow for Go Standard Action](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml/badge.svg)](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml) [![codecov](https://codecov.io/github/AllanM007/simpler-test/graph/badge.svg?token=W5ZXQ6HFO0)](https://codecov.io/github/AllanM007/simpler-test)
+[![Workflow for Go Standard Action](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml/badge.svg)](https://github.com/AllanM007/simpler-test/actions/workflows/test-build-deploy.yml) [![codecov](https://codecov.io/github/AllanM007/simpler-test/graph/badge.svg?token=W5ZXQ6HFO0)](https://codecov.io/github/AllanM007/simpler-test) [![Go Report Card](https://goreportcard.com/badge/github.com/AllanM007/simpler-test)](https://goreportcard.com/report/github.com/AllanM007/simpler-test)
 
 ### Backend Engineer Take Home Test @Simpler
 
