@@ -32,7 +32,7 @@ docker compose up -d
 
 ### API Documentation
 
-- The API is documented using Swagger and can be accessed at:
+- This API is documented using Swagger and can be accessed at:
 
 ```
 http://localhost:8080/api/swagger/index.html
@@ -40,7 +40,7 @@ http://localhost:8080/api/swagger/index.html
 
 ### Pagination
 
-- The API utilizes <strong>Offset</strong> api pagination in the products endpoint by passing <strong>page=&limit=</strong> parameters to the `products` endpoint.
+- This API utilizes <strong>Offset</strong> api pagination in the products endpoint by passing <strong>page=?&limit=?</strong> parameters to the `products` endpoint.
 
 ### Tests
 - The project has unit and integration tests utilizing testcontainers which can be run using:
@@ -59,4 +59,4 @@ go test -v ./...
 
 ### CI/CD
 
-- The project has a ci/cd pipeline implemented using <strong>GitHub Actions</strong> that builds, tests and deploys the service to a container registry:  [Docker Hub](https://hub.docker.com/r/mwarangu/simpler-test) .
+- This API has a ci/cd pipeline implemented using <strong>GitHub Actions</strong> that builds, tests and deploys the service to a container registry:  [Docker Hub](https://hub.docker.com/r/mwarangu/simpler-test) .
