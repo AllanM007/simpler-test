@@ -80,10 +80,10 @@ func (p ProductHandler) CreateProduct(ctx *gin.Context) {
 		if strings.Contains(result.Error.Error(), "duplicate key value") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"status": "DUPLICATE_ENTITY", "error": "Duplicate conflict while creating product!"})
 			return
-		} else {
-			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-			return
 		}
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+
 	}
 
 	ctx.JSON(http.StatusCreated, gin.H{"status": "OK", "message": "Product created successfully!"})
@@ -242,12 +242,10 @@ func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 
 	var updateProductReq ProductUpdateReq
 	if err := ctx.ShouldBindJSON(&updateProductReq); err != nil {
-		if err := ctx.ShouldBindJSON(&updateProductReq); err != nil {
-			if validationErrors, ok := err.(validator.ValidationErrors); ok {
-				errors := formatValidationError(validationErrors)
-				ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "errors": errors})
-				return
-			}
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			errors := formatValidationError(validationErrors)
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "errors": errors})
+			return
 		}
 	}
 
@@ -272,10 +270,10 @@ func (p ProductHandler) UpdateProduct(ctx *gin.Context) {
 		if strings.Contains(updateResult.Error.Error(), "duplicate key value") {
 			ctx.AbortWithStatusJSON(http.StatusConflict, gin.H{"status": "DUPLICATE_ENTITY", "error": "Duplicate conflict while updating product!"})
 			return
-		} else {
-			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-			return
 		}
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "OK", "message": "Product updated successfully!"})
@@ -302,12 +300,10 @@ func (p *ProductHandler) ProductSale(ctx *gin.Context) {
 
 	var productSaleReq ProductSale
 	if err := ctx.ShouldBindJSON(&productSaleReq); err != nil {
-		if err := ctx.ShouldBindJSON(&productSaleReq); err != nil {
-			if validationErrors, ok := err.(validator.ValidationErrors); ok {
-				errors := formatValidationError(validationErrors)
-				ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "errors": errors})
-				return
-			}
+		if validationErrors, ok := err.(validator.ValidationErrors); ok {
+			errors := formatValidationError(validationErrors)
+			ctx.JSON(http.StatusBadRequest, gin.H{"status": "BAD_REQUEST", "errors": errors})
+			return
 		}
 	}
 
